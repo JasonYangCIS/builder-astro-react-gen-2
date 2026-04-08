@@ -1,0 +1,30 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span class="copyright-notice">
+      &copy; {year} My Builder Sandbox. All rights reserved.
+    </span>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 4rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .footer-inner {
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    text-align: center;
+  }
+
+  .copyright-notice {
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+  }
+</style>

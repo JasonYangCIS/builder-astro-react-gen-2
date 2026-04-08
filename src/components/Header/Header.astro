@@ -1,0 +1,169 @@
+---
+import { fetchEntries } from "@builder.io/sdk-react";
+import { NavItems } from "./NavItems";
+import type { NavEntry } from "./NavItems";
+
+const rawEntries = await fetchEntries({
+  apiKey: import.meta.env.PUBLIC_BUILDER_API_KEY,
+  model: "header-nav-menu",
+  options: {
+    fields: "id,data",
+    limit: 5,
+  },
+}).catch(() => []);
+
+const navEntries: NavEntry[] = rawEntries
+  .filter((e) => e.data?.text && e.data?.url)
+  .map((e) => ({
+    id: e.id ?? crypto.randomUUID(),
+    text: e.data!.text as string,
+    url: e.data!.url as string,
+  }));
+---
+
+<header class="site-header">
+  <div class="header-inner">
+    <!-- Logo / site name -->
+    <a href="/" class="site-logo" aria-label="Go to homepage">
+      <span class="site-name">Jason Yang - Builder.io - Astro</span>
+    </a>
+
+    <!-- Desktop nav (md+) -->
+    <div class="desktop-nav-wrapper">
+      <NavItems client:load entries={navEntries} onlyDesktopNav />
+    </div>
+
+    <!-- Mobile hamburger (below md) -->
+    <div class="mobile-nav-wrapper">
+      <NavItems client:load entries={navEntries} onlyMobileMenu />
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    width: 100%;
+    border-bottom: 1px solid var(--border);
+    background-color: var(--background);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    height: 64px;
+  }
+
+  .site-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--foreground);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.125rem;
+    transition: opacity 0.15s;
+  }
+
+  .site-logo:hover {
+    opacity: 0.8;
+  }
+
+  .site-name {
+    line-height: 1;
+  }
+
+  /* ── Styles consumed by NavItems React component ── */
+
+  :global(.nav-link) {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--muted-foreground);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  :global(.nav-link:hover) {
+    color: var(--foreground);
+  }
+
+  :global(.hamburger-btn) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--foreground);
+    cursor: pointer;
+    transition: background-color 0.15s;
+  }
+
+  :global(.hamburger-btn:hover) {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+
+  :global(.mobile-backdrop) {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: oklch(0 0 0 / 40%);
+    z-index: 40;
+  }
+
+  :global(.mobile-drawer) {
+    position: fixed;
+    top: 64px;
+    right: 0;
+    bottom: 0;
+    width: min(280px, 85vw);
+    background-color: var(--card);
+    border-left: 1px solid var(--border);
+    z-index: 50;
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.25s ease;
+  }
+
+  :global(.mobile-drawer--open) {
+    transform: translateX(0);
+  }
+
+  :global(.mobile-nav-list) {
+    list-style: none;
+    margin: 0;
+    padding: 1rem 0;
+  }
+
+  :global(.mobile-nav-link) {
+    display: block;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--foreground);
+    text-decoration: none;
+    transition: background-color 0.15s;
+  }
+
+  :global(.mobile-nav-link:hover) {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+
+  :global(.mobile-nav-empty) {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+  }
+</style>
