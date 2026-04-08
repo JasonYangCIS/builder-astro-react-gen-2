@@ -8,5 +8,4 @@ export default defineConfig({
   integrations: [react()],
   site: 'https://jasonyangcis.github.io',
   base: 'builder-astro-react-gen-2',
-  devToolbar: { enabled: false },
 });
