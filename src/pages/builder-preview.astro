@@ -1,9 +1,8 @@
 ---
 import { BuilderPreviewPage } from "../components/BuilderPreviewPage/BuilderPreviewPage";
+import Layout from "../layouts/Layout.astro";
 ---
 
-<html>
-  <body>
-    <BuilderPreviewPage client:load />
-  </body>
-</html>
+<Layout>
+  <BuilderPreviewPage client:load />
+</Layout>

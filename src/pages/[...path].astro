@@ -29,12 +29,9 @@ const builderContent = await fetchOneEntry({
   model: "page",
   userAttributes: { urlPath: path },
 });
-
 ---
 
 <Layout>
-  <h1>Hello World - {builderContent?.data?.title ?? "No title"}</h1>
-
   <Content
     model="page"
     apiKey={import.meta.env.PUBLIC_BUILDER_API_KEY}
