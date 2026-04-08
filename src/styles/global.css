@@ -59,6 +59,34 @@
   --ring: oklch(0.552 0.016 285.938);
 }
 
+/* ── Header responsive nav wrappers ── */
+.desktop-nav-wrapper {
+  display: none;
+}
+
+.mobile-nav-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .desktop-nav-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .mobile-nav-wrapper {
+    display: none;
+  }
+}
+
+.nav-desktop {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
 html,
 body {
   margin: 0;
