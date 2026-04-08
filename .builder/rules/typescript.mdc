@@ -1,0 +1,64 @@
+---
+description: TypeScript conventions for Builder data fields, component props, and Astro-specific patterns
+globs: src/**/*.ts,src/**/*.tsx,src/**/*.astro
+alwaysApply: false
+---
+# TypeScript Rules
+
+Full conventions: `docs/skills/engineering-standards.md`
+
+## Builder Data Fields
+- `slug: string` — always required, never null
+- All other Builder fields: `string | null` — never `string | undefined`
+- Access: `entry.data?.slug`, `entry.data?.title`
+
+
+// types/mymodel.types.ts
+export interface MyModel {
+  slug: string;          // required identifier
+  title?: string | null; // optional — always string | null, not string | undefined
+  image?: string | null; // Builder returns null for empty fields
+}
+```
+
+## Astro Component Props
+Use `interface Props` inside the `.astro` frontmatter:
+```ts
+---
+interface Props {
+  title: string;
+  description?: string;  // optional — use `?` not `string | undefined` in prop interfaces
+}
+const { title, description } = Astro.props;
+---
+```
+
+## React Island Props
+Type interfaces alongside the component:
+```ts
+// Inline in MyComponent.tsx or in MyComponent.types.ts for complex components
+interface MyComponentProps {
+  entries: NavEntry[];
+  onlyDesktopNav?: boolean;
+}
+```
+
+## File Conventions
+- Builder model types: `src/types/mymodel.types.ts` (create `src/types/` if needed)
+- Component types: inline in the component file or `ComponentName.types.ts` alongside it
+- No path alias configured — use relative imports: `import type { NavEntry } from "./NavItems"`
+- Always `import type` for type-only imports
+
+## Library Type Re-exports
+Never redefine types that the library exports:
+```ts
+// ❌ Wrong
+export type BuilderContent = { id: string; data: Record<string, unknown> };
+
+// ✅ Correct — re-export from the library
+import type { BuilderContent } from "@builder.io/sdk-react";
+export type { BuilderContent };
+```
+
+## Strict Mode
+`tsconfig.json` extends `astro/tsconfigs/strict` — no `any` without justification, no `@ts-ignore` without comment.

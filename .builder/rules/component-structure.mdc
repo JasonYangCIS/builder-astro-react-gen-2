@@ -1,0 +1,98 @@
+---
+description: Component folder and file structure for Astro components and React islands
+globs: src/components/**,src/layouts/**
+alwaysApply: false
+---
+# Component File Structure
+
+## Two component types — do not mix
+
+| Type | Extension | Location | When to use |
+|------|-----------|----------|-------------|
+| Astro component | `.astro` | `src/components/MyComponent/` | Static UI, server-side data fetching, layout |
+| React island | `.tsx` | `src/components/MyComponent/` | Interactivity — state, events, browser APIs |
+
+## Astro component pattern
+
+src/components/MyComponent/
+  MyComponent.astro    # Server-rendered, zero JS shipped by default
+```
+
+### Astro component conventions
+- Fetch data in the frontmatter (`---` block), not in the template
+- Use scoped `<style>` for component-specific CSS (Astro auto-scopes to the component)
+- Use `:global(.class)` to style elements inside React islands mounted by this component
+- Props are typed with `interface Props` and accessed via `Astro.props`
+
+```astro
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description } = Astro.props;
+---
+<section class="my-section">
+  <h2 class="section-title">{title}</h2>
+  {description && <p class="section-description">{description}</p>}
+</section>
+
+<style>
+  .my-section { padding: 2rem 0; }
+  .section-title { font-size: 1.5rem; font-weight: 700; }
+</style>
+```
+
+## React island pattern
+```
+src/components/MyComponent/
+  MyComponent.tsx      # "use client" NOT needed — React in Astro uses client: directives
+  MyComponent.types.ts # TypeScript interfaces (optional, for complex components)
+```
+
+### React island conventions
+- Do NOT use `"use client"` — that is Next.js syntax. Astro uses `client:*` directives at the mount site.
+- Export as named export or default export (no preference, but be consistent)
+- Receive all server-fetched data as props — do not fetch inside the island if Astro can do it
+- Client hydration directives (set on the component in the `.astro` file):
+  - `client:load` — hydrate immediately on page load (interactive nav, preview)
+  - `client:idle` — hydrate when browser is idle (non-critical interactive elements)
+  - `client:visible` — hydrate when element enters the viewport (below-the-fold)
+
+```tsx
+// MyComponent.tsx
+import { useState } from "react";
+
+interface MyComponentProps {
+  initialCount: number;
+}
+
+export function MyComponent({ initialCount }: MyComponentProps) {
+  const [count, setCount] = useState(initialCount);
+  return <button onClick={() => setCount(c => c + 1)}>{count}</button>;
+}
+```
+
+```astro
+// In an .astro file
+---
+import { MyComponent } from "./MyComponent";
+---
+<MyComponent client:load initialCount={0} />
+```
+
+## CSS conventions
+- **Do NOT use CSS Modules or SCSS** — this project uses scoped Astro `<style>` blocks + global CSS
+- Color values: always `var(--token-name)`, never hardcoded hex/oklch
+- Tailwind utilities: layout helpers (`flex`, `grid`, `gap-*`, `p-*`) — fine to use in templates
+- Avoid inline `style` attributes — prefer scoped class names with descriptive names
+
+## No barrel files
+Import directly from the component file:
+```ts
+// ✅ Correct
+import { NavItems } from "../components/Header/NavItems";
+import Footer from "../components/Footer/Footer.astro";
+
+// ❌ Wrong
+import { NavItems } from "../components/Header";
