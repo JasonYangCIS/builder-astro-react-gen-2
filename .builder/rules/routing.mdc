@@ -1,0 +1,77 @@
+---
+description: Astro routing conventions for Builder-connected pages — getStaticPaths, catch-all, and preview routes
+globs: src/pages/**
+alwaysApply: false
+---
+# Routing Rules
+
+Full patterns: `docs/skills/builder-io.md`
+
+## Critical Rules
+- All data fetching for static pages happens in `.astro` frontmatter or `getStaticPaths`
+- `[...path].astro` does NOT match `/` — add a dedicated `index.astro` if you need a Builder-managed root
+- API key: always `import.meta.env.PUBLIC_BUILDER_API_KEY`
+- `isPreviewing()` check before showing 404 in preview/editor context
+- Base path is `/builder-astro-react-gen-2` — Astro handles this automatically via `astro.config.mjs`
+
+## Route Types
+
+| Route | File | Fetch |
+|---|---|---|
+| Catch-all | `src/pages/[...path].astro` | `getStaticPaths` + `fetchEntries`, then `fetchOneEntry` |
+| Root | `src/pages/index.astro` | `fetchOneEntry` with `urlPath: "/"` |
+| Preview | `src/pages/builder-preview.astro` | Client-side via `BuilderPreviewPage.tsx` (React island) |
+
+## Catch-all Pattern
+
+---
+import { fetchEntries, fetchOneEntry, Content } from "@builder.io/sdk-react";
+import Layout from "../layouts/Layout.astro";
+
+export async function getStaticPaths() {
+  const entries = await fetchEntries({
+    apiKey: import.meta.env.PUBLIC_BUILDER_API_KEY,
+    model: "page",
+    options: { fields: "data.url" },
+  });
+
+  return entries.map((entry) => {
+    const url = entry.data?.url ?? "/";
+    const stripped = url.replace(/^\//, "");
+    return { params: { path: stripped || undefined } };
+  });
+}
+
+const { path } = Astro.params;
+const content = await fetchOneEntry({
+  apiKey: import.meta.env.PUBLIC_BUILDER_API_KEY,
+  model: "page",
+  userAttributes: { urlPath: path ? `/${path}` : "/" },
+});
+---
+<Layout>
+  <Content model="page" apiKey={import.meta.env.PUBLIC_BUILDER_API_KEY} content={content} />
+</Layout>
+```
+
+## Preview Route Pattern
+```astro
+---
+// src/pages/builder-preview.astro
+import { BuilderPreviewPage } from "../components/BuilderPreviewPage/BuilderPreviewPage";
+---
+<BuilderPreviewPage client:load />
+```
+
+The React island reads `builder.preview` from query params and fetches content client-side.
+
+## Key Gotchas
+
+### getStaticPaths runs at build time
+For static sites, `getStaticPaths` is called once at build. Changes to Builder content only appear after a rebuild unless you use an SSR adapter.
+
+### Content may be null in editor/preview
+`fetchOneEntry` returns `null` for unpublished or unmatched content. Always check `isPreviewing()` before showing 404 UI — Builder renders pages inside an iframe where content may be null legitimately.
+
+### Base path
+`astro.config.mjs` sets `base: "builder-astro-react-gen-2"`. Astro prepends this automatically to all internal links when using `<a href="...">` via `Astro.url`. For manual link construction, Astro's `import.meta.env.BASE_URL` provides the base.
