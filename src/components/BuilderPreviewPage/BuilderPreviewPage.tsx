@@ -1,34 +1,37 @@
-import { useState, useEffect } from "react";
-import {
-  Content,
-  fetchOneEntry,
-  isPreviewing,
-  type BuilderContent,
-} from "@builder.io/sdk-react";
+import { useState, useEffect, useRef } from "react";
+import { Content, fetchOneEntry, isPreviewing, type BuilderContent } from "@builder.io/sdk-react";
+
+const API_KEY = import.meta.env.PUBLIC_BUILDER_API_KEY;
 
 export const BuilderPreviewPage = () => {
-
   const [content, setContent] = useState<BuilderContent | null>(null);
+  const [loading, setLoading] = useState(true);
+  const modelRef = useRef<string>('page');
 
   useEffect(() => {
+    modelRef.current = new URLSearchParams(window.location.search).get('builder.preview') ?? 'page';
+
     fetchOneEntry({
-      model: "page",
-      apiKey: import.meta.env.PUBLIC_BUILDER_API_KEY,
-      userAttributes: {
-        urlPath: window.location.pathname,
-      },
-    }).then((data) => setContent(data));
+      model: modelRef.current,
+      apiKey: API_KEY,
+      userAttributes: { urlPath: window.location.pathname },
+    }).then((data) => {
+      setContent(data);
+      setLoading(false);
+    });
   }, []);
 
-  const shouldRender = content || isPreviewing();
+  if (loading) return <div>Loading...</div>;
+
+  const shouldRender = content || isPreviewing(Object.fromEntries(new URLSearchParams(window.location.search)));
 
   if (!shouldRender) return <div>404 - Page not found</div>;
 
   return (
     <Content
       content={content}
-      model="page"
-      apiKey={import.meta.env.PUBLIC_BUILDER_API_KEY}
+      model={modelRef.current}
+      apiKey={API_KEY}
     />
   );
 };
