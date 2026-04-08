@@ -1,0 +1,77 @@
+---
+description: Design system tokens, CSS conventions, and Tailwind v4 usage in this Astro project
+globs: src/components/**,src/layouts/**,src/styles/**
+alwaysApply: false
+---
+# Design System Rules
+
+Full conventions: `docs/skills/design-system.md`
+
+## Critical Rules
+- Never hardcode colors — always use CSS custom properties: `var(--foreground)`, `var(--primary)`, etc.
+- Use scoped `<style>` in Astro components — no CSS Modules, no SCSS
+- Use `:global(.class)` in Astro `<style>` to reach inside React islands
+- Tailwind utilities for layout only — color values always come from CSS variables
+
+## Color Tokens (`src/styles/global.css`)
+
+All tokens are defined in `:root` and overridden in `[data-theme="dark"]`:
+
+| CSS Variable | Use |
+|---|---|
+| `--background` | Page/body background |
+| `--foreground` | Primary text color |
+| `--primary` | Primary action color |
+| `--primary-foreground` | Text on primary backgrounds |
+| `--secondary` | Secondary surface |
+| `--secondary-foreground` | Text on secondary |
+| `--muted` | Subtle background |
+| `--muted-foreground` | De-emphasized text |
+| `--accent` | Hover/highlight surface |
+| `--accent-foreground` | Text on accent |
+| `--destructive` | Error/danger |
+| `--card` | Card surface |
+| `--card-foreground` | Text on cards |
+| `--border` | Default border color |
+| `--input` | Form input borders |
+| `--ring` | Focus ring |
+| `--container-max-width` | Max content width (1280px) |
+
+## Tailwind v4 Integration
+
+Tokens are bridged to Tailwind via `@theme inline` in `global.css`:
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  /* etc. */
+}
+```
+This means you can use Tailwind utilities like `bg-background`, `text-foreground`, `text-muted-foreground`.
+
+## Themes
+Two themes defined in `src/styles/global.css`:
+- Default (light, zinc-based OKLCH)
+- Dark — toggle by setting `data-theme="dark"` on `<html>`
+
+## Focus Rings
+Visible focus indicators are required for accessibility. Use:
+```css
+.my-interactive:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+```
+
+## Typography
+No dedicated `Text` component — use semantic HTML directly:
+```astro
+<h1 class="page-title">Heading</h1>
+<p class="body-text">Body content</p>
+```
+
+## CSS Naming
+- Use descriptive, semantic class names: `.site-header`, `.nav-link`, `.copyright-notice`
+- Avoid generic names: not `.div-1`, not `.wrapper`, not `.container` (use `.site-footer` instead)
+- Component-scoped classes in `.astro` `<style>` blocks
+- `:global()` only for React island targets

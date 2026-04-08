@@ -1,0 +1,74 @@
+---
+description: Builder.io SDK usage, content fetching, editor/preview guards, and custom component registration in Astro
+globs: src/**/*.astro,src/**/*.tsx,src/**/*.ts
+alwaysApply: false
+---
+# Builder SDK Rules
+
+Full patterns and gotchas: `docs/skills/builder-io.md`
+
+## Critical Rules
+- Import only from `@builder.io/sdk-react`: `fetchOneEntry`, `fetchEntries`, `Content`, `isPreviewing`, `isEditing`
+- API key: always `import.meta.env.PUBLIC_BUILDER_API_KEY` — never inline
+- Use `Content` directly for rendering (no wrapper component like Next.js `RenderBuilderContent`)
+- Always guard 404 with `isPreviewing()` before showing not-found UI
+
+## Fetching in Astro Pages
+
+---
+import { fetchOneEntry, fetchEntries } from "@builder.io/sdk-react";
+
+// In getStaticPaths (catch-all routes)
+export async function getStaticPaths() {
+  const entries = await fetchEntries({
+    apiKey: import.meta.env.PUBLIC_BUILDER_API_KEY,
+    model: "page",
+    options: { fields: "data.url" },
+  });
+  return entries.map((entry) => {
+    const url = entry.data?.url ?? "/";
+    const stripped = url.replace(/^\//, "");
+    return { params: { path: stripped || undefined } };
+  });
+}
+
+// In page frontmatter
+const content = await fetchOneEntry({
+  apiKey: import.meta.env.PUBLIC_BUILDER_API_KEY,
+  model: "page",
+  userAttributes: { urlPath: Astro.params.path ?? "/" },
+});
+---
+```
+
+## Rendering Builder Content (React island)
+```tsx
+// In a .tsx React island
+import { Content, isPreviewing } from "@builder.io/sdk-react";
+
+// Render guard — never show 404 in editor/preview
+const shouldRender = content || isPreviewing(searchParams);
+
+if (!shouldRender) return <div>404 - Page not found</div>;
+
+return <Content content={content} model="page" apiKey={API_KEY} />;
+```
+
+## Adding a New Model
+1. Identify the model name (string) — document it clearly, do not scatter magic strings
+2. Create `types/mymodel.types.ts` — use `string | null` for optional fields
+3. Add route in `src/pages/` — `.astro` file with `getStaticPaths` if dynamic
+4. If using custom components: register in a `.builder.ts` file (see `component-structure.mdc`)
+
+## Preview Route
+`src/pages/builder-preview.astro` + `BuilderPreviewPage.tsx` (React island, `client:load`) handles all models.
+The React component reads `builder.preview` from query params to determine the model.
+
+## subscribeToEditor (Nav pattern)
+For live-editing nav items in the Builder editor, use `subscribeToEditor` inside the React island.
+Always guard against model mismatch:
+```ts
+if (!isPreviewing()) return;
+const previewModel = new URLSearchParams(window.location.search).get("builder.preview");
+if (previewModel && previewModel !== "header-nav-menu") return;
+// then call subscribeToEditor(...)
