@@ -11,9 +11,11 @@ export interface NavEntry {
 
 interface NavItemsProps {
   entries: NavEntry[];
+  onlyDesktopNav?: boolean;
+  onlyMobileMenu?: boolean;
 }
 
-export function NavItems({ entries }: NavItemsProps) {
+export function NavItems({ entries, onlyDesktopNav, onlyMobileMenu }: NavItemsProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const closeMobileMenu = useCallback(() => setMobileOpen(false), []);
@@ -36,63 +38,63 @@ export function NavItems({ entries }: NavItemsProps) {
 
   return (
     <>
-      {/* Desktop nav */}
-      <nav className="hidden items-center gap-6 md:flex" aria-label="Main navigation">
-        {entries.map((entry) => (
-          <a
-            key={entry.id}
-            href={entry.url}
-            className="nav-link"
-          >
-            {entry.text}
-          </a>
-        ))}
-      </nav>
-
-      {/* Mobile hamburger button */}
-      <button
-        className="hamburger-btn md:hidden"
-        aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
-        aria-expanded={mobileOpen}
-        aria-controls="mobile-navigation"
-        onClick={() => setMobileOpen((prev) => !prev)}
-      >
-        {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-      </button>
-
-      {/* Mobile drawer backdrop */}
-      {mobileOpen && (
-        <div
-          className="mobile-backdrop md:hidden"
-          aria-hidden="true"
-          onClick={closeMobileMenu}
-        />
+      {/* Desktop nav — hidden when onlyMobileMenu */}
+      {!onlyMobileMenu && (
+        <nav className="nav-desktop" aria-label="Main navigation">
+          {entries.map((entry) => (
+            <a key={entry.id} href={entry.url} className="nav-link">
+              {entry.text}
+            </a>
+          ))}
+        </nav>
       )}
 
-      {/* Mobile drawer */}
-      <nav
-        id="mobile-navigation"
-        className={`mobile-drawer md:hidden ${mobileOpen ? "mobile-drawer--open" : ""}`}
-        aria-label="Mobile navigation"
-        aria-hidden={!mobileOpen}
-      >
-        <ul className="mobile-nav-list">
-          {entries.map((entry) => (
-            <li key={entry.id}>
-              <a
-                href={entry.url}
-                className="mobile-nav-link"
-                onClick={closeMobileMenu}
-              >
-                {entry.text}
-              </a>
-            </li>
-          ))}
-          {entries.length === 0 && (
-            <li className="mobile-nav-empty">No navigation items</li>
+      {/* Mobile hamburger + drawer — hidden when onlyDesktopNav */}
+      {!onlyDesktopNav && (
+        <>
+          <button
+            className="hamburger-btn"
+            aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-navigation"
+            onClick={() => setMobileOpen((prev) => !prev)}
+          >
+            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+
+          {mobileOpen && (
+            <div
+              className="mobile-backdrop"
+              aria-hidden="true"
+              onClick={closeMobileMenu}
+            />
           )}
-        </ul>
-      </nav>
+
+          <nav
+            id="mobile-navigation"
+            className={`mobile-drawer${mobileOpen ? " mobile-drawer--open" : ""}`}
+            aria-label="Mobile navigation"
+            aria-hidden={!mobileOpen}
+          >
+            <ul className="mobile-nav-list">
+              {entries.map((entry) => (
+                <li key={entry.id}>
+                  <a
+                    href={entry.url}
+                    className="mobile-nav-link"
+                    onClick={closeMobileMenu}
+                  >
+                    {entry.text}
+                  </a>
+                </li>
+              ))}
+              {entries.length === 0 && (
+                <li className="mobile-nav-empty">No navigation items</li>
+              )}
+            </ul>
+          </nav>
+        </>
+      )}
     </>
   );
 }

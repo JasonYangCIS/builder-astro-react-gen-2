@@ -28,8 +28,15 @@ const navEntries: NavEntry[] = rawEntries
       <span class="site-name">Jason Yang - Builder.io - Astro</span>
     </a>
 
-    <!-- Nav items (desktop + mobile hamburger) -->
-    <NavItems client:load entries={navEntries} />
+    <!-- Desktop nav (md+) -->
+    <div class="desktop-nav-wrapper">
+      <NavItems client:load entries={navEntries} onlyDesktopNav />
+    </div>
+
+    <!-- Mobile hamburger (below md) -->
+    <div class="mobile-nav-wrapper">
+      <NavItems client:load entries={navEntries} onlyMobileMenu />
+    </div>
   </div>
 </header>
 
@@ -73,6 +80,28 @@ const navEntries: NavEntry[] = rawEntries
   }
 
   /* ── Styles consumed by NavItems React component ── */
+
+  .desktop-nav-wrapper {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .desktop-nav-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .mobile-nav-wrapper {
+      display: none;
+    }
+  }
+
+  :global(.nav-desktop) {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
 
   :global(.nav-link) {
     font-size: 0.875rem;
