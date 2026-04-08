@@ -78,4 +78,4 @@ src/
 
 - [Builder.io Documentation](https://www.builder.io/c/docs/developers)
 - [Astro Documentation](https://docs.astro.build)
-- [Builder.io Gen 2 SDK](https://www.builder.io/c/docs/developers)
+- [Builder.io Gen 2 SDK](https://www.builder.io/c/docs/sdk-comparison)
