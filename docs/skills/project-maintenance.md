@@ -20,18 +20,16 @@ After scaffolding a new component, check each item below and update if applicabl
 
 ---
 
-## Skill sync checklist — run when adding or removing a skill
+## Skill sync checklist — run when adding or removing a reference doc
 
-Every skill has references in **four locations**. When you add, remove, or rename a skill, update all of them:
+When you add, remove, or rename a skill doc, update both:
 
 | Location | What to update |
 |----------|----------------|
-| `docs/skills/<skill>.md` | Add/remove the full skill doc (canonical source of truth) |
-| `.builder/skills/<skill>/SKILL.md` | Add/remove Builder Fusion pointer |
-| `.claude/skills/<skill>/SKILL.md` | Add/remove Claude Code pointer |
-| `CLAUDE.md` — Skills table | Add/remove row in the skills table |
+| `docs/skills/<skill>.md` | Add/remove the full doc (canonical source of truth) |
+| `CLAUDE.md` — Reference Docs table | Add/remove the row |
 
-**Current skills:** `builder-io`, `design-system`, `engineering-standards`, `project-maintenance`
+**Current docs:** `builder-io`, `design-system`, `project-maintenance`
 
 ---
 

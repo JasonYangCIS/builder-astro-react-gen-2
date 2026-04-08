@@ -16,7 +16,7 @@ alwaysApply: false
 
 src/components/MyComponent/
   MyComponent.astro    # Server-rendered, zero JS shipped by default
-```
+
 
 ### Astro component conventions
 - Fetch data in the frontmatter (`---` block), not in the template
@@ -86,6 +86,21 @@ import { MyComponent } from "./MyComponent";
 - Color values: always `var(--token-name)`, never hardcoded hex/oklch
 - Tailwind utilities: layout helpers (`flex`, `grid`, `gap-*`, `p-*`) — fine to use in templates
 - Avoid inline `style` attributes — prefer scoped class names with descriptive names
+
+## TypeScript — Builder data fields
+Builder optional fields are always `string | null`, never `string | undefined`. Builder returns `null` for empty fields.
+
+```ts
+// Correct
+interface MyModel {
+  slug: string;          // required — never null
+  title?: string | null; // optional Builder field
+  image?: string | null;
+}
+// Access: entry.data?.title
+```
+
+No `@/` path alias in this project — use relative imports.
 
 ## No barrel files
 Import directly from the component file:

@@ -78,18 +78,24 @@ Astro exposes env vars with the `PUBLIC_` prefix to the client:
 - `import.meta.env.PUBLIC_BUILDER_API_KEY` — Builder API key (safe to expose)
 - Server-only vars (without `PUBLIC_`) are only accessible in `.astro` frontmatter and SSR
 
-## Skills
+## Key Conventions
 
-Skills load on demand — consult the relevant skill for task-specific patterns and gotchas:
+- Fetch data in `.astro` frontmatter — never inside a React island when Astro can do it
+- `client:idle` over `client:load` for non-critical interactive elements
+- CSS: always `var(--token-name)`, never hardcoded colors; scoped `<style>` in Astro files
+- Builder optional data fields: always `string | null`, never `string | undefined`
+- No `@/` path alias — use relative imports
+- No `"use client"` — use `client:*` directives at the mount site in `.astro` files
 
-| Skill | When to use |
-|-------|-------------|
-| `builder-io` | Builder SDK, content fetching, models, editor/preview, custom components |
-| `design-system` | UI components, CSS tokens, WCAG contrast, Tailwind composition |
-| `engineering-standards` | Astro/React, TypeScript, code quality, SEO, security, performance, WCAG AA |
-| `project-maintenance` | Doc update checklist (new components), skill sync checklist |
+## Reference Docs
 
-Canonical docs live in `docs/skills/`. Pointers in `.builder/skills/` (Fusion) and `.claude/skills/` (Claude Code).
+Detailed patterns and code examples live in `docs/skills/`:
+
+| Doc | What's covered |
+|-----|---------------|
+| `docs/skills/builder-io.md` | SDK patterns, routes, content rendering, custom components |
+| `docs/skills/design-system.md` | Token reference, CSS conventions, Tailwind v4 usage |
+| `docs/skills/project-maintenance.md` | Checklists for doc/skill updates |
 
 ## Rules
 @.builderrules
