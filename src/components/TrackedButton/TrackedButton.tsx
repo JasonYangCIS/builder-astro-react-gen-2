@@ -33,12 +33,16 @@ export function TrackedButton({
       }
     }
 
+    const trackArgs: Parameters<typeof track>[0] = {
+      type: trackEventType ?? "click",
+      apiKey: API_KEY,
+    };
+    if (Object.keys(metadata).length > 0) {
+      trackArgs.metadata = metadata;
+    }
+
     try {
-      track({
-        type: trackEventType ?? "click",
-        apiKey: API_KEY,
-        metadata,
-      });
+      track(trackArgs);
     } catch (err) {
       console.warn("[TrackedButton] track() failed:", err);
     }
@@ -60,19 +64,13 @@ export function TrackedButton({
     }
   };
 
-  const sizeClass = size === "sm" ? "btn--sm" : size === "lg" ? "btn--lg" : "btn--default";
-  const variantClass = `btn--${variant}`;
-
-  const sharedProps = {
-    className: `tracked-btn ${variantClass} ${sizeClass}`,
-    onClick: handleClick,
-  };
+  const className = `trkbtn trkbtn--${variant} trkbtn--${size === "sm" ? "sm" : size === "lg" ? "lg" : "default"}`;
 
   return (
     <>
       {link ? (
         <a
-          {...sharedProps}
+          className={className}
           href={link}
           target={openInNewTab ? "_blank" : undefined}
           rel={openInNewTab ? "noopener noreferrer" : undefined}
@@ -84,13 +82,13 @@ export function TrackedButton({
           {text}
         </a>
       ) : (
-        <button {...sharedProps} type="button">
+        <button className={className} type="button" onClick={handleClick}>
           {text}
         </button>
       )}
 
       <style>{`
-        .tracked-btn {
+        .trkbtn {
           display: inline-flex;
           align-items: center;
           justify-content: center;
@@ -105,62 +103,62 @@ export function TrackedButton({
           transition: opacity 0.15s ease, background-color 0.15s ease, color 0.15s ease;
           white-space: nowrap;
         }
-        .tracked-btn:focus-visible {
+        .trkbtn:focus-visible {
           outline: 2px solid var(--ring, currentColor);
           outline-offset: 2px;
         }
-        .tracked-btn:disabled {
+        .trkbtn:disabled {
           opacity: 0.5;
           pointer-events: none;
         }
 
         /* Sizes */
-        .btn--sm {
+        .trkbtn--sm {
           padding: 0.375rem 0.75rem;
           font-size: 0.8125rem;
         }
-        .btn--default {
+        .trkbtn--default {
           padding: 0.5rem 1.25rem;
         }
-        .btn--lg {
+        .trkbtn--lg {
           padding: 0.75rem 1.75rem;
           font-size: 1rem;
         }
 
         /* Variants */
-        .btn--primary {
+        .trkbtn--primary {
           background-color: var(--foreground);
           color: var(--background);
           border-color: var(--foreground);
         }
-        .btn--primary:hover {
+        .trkbtn--primary:hover {
           opacity: 0.85;
         }
 
-        .btn--outline {
+        .trkbtn--outline {
           background-color: transparent;
           color: var(--foreground);
           border-color: var(--border);
         }
-        .btn--outline:hover {
+        .trkbtn--outline:hover {
           background-color: var(--muted);
         }
 
-        .btn--secondary {
+        .trkbtn--secondary {
           background-color: var(--muted);
           color: var(--muted-foreground);
           border-color: transparent;
         }
-        .btn--secondary:hover {
+        .trkbtn--secondary:hover {
           opacity: 0.8;
         }
 
-        .btn--ghost {
+        .trkbtn--ghost {
           background-color: transparent;
           color: var(--muted-foreground);
           border-color: transparent;
         }
-        .btn--ghost:hover {
+        .trkbtn--ghost:hover {
           background-color: var(--muted);
           color: var(--foreground);
         }
