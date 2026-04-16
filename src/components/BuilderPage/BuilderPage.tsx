@@ -1,4 +1,7 @@
 import { Content, isPreviewing, type BuilderContent } from "@builder.io/sdk-react";
+import { trackedButtonConfig } from "../TrackedButton/TrackedButton.builder";
+
+const CUSTOM_COMPONENTS = [trackedButtonConfig];
 
 interface BuilderPageProps {
   content: BuilderContent | null;
@@ -16,6 +19,7 @@ export function BuilderPage({ content, apiKey, model }: BuilderPageProps) {
       content={content}
       model={model}
       apiKey={apiKey}
+      customComponents={CUSTOM_COMPONENTS}
     />
   );
 }

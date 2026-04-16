@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Content, fetchOneEntry, isPreviewing, type BuilderContent } from "@builder.io/sdk-react";
+import { trackedButtonConfig } from "../TrackedButton/TrackedButton.builder";
+
+const CUSTOM_COMPONENTS = [trackedButtonConfig];
 
 const API_KEY = import.meta.env.PUBLIC_BUILDER_API_KEY;
 
@@ -32,6 +35,7 @@ export const BuilderPreviewPage = () => {
       content={content}
       model={modelRef.current}
       apiKey={API_KEY}
+      customComponents={CUSTOM_COMPONENTS}
     />
   );
 };
