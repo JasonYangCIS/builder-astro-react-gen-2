@@ -1,6 +1,7 @@
 ---
-import { fetchEntries, fetchOneEntry, Content } from "@builder.io/sdk-react";
+import { fetchEntries, fetchOneEntry } from "@builder.io/sdk-react";
 import Layout from "../layouts/Layout.astro";
+import { BuilderPage } from "../components/BuilderPage/BuilderPage";
 
 export async function getStaticPaths() {
   const entries = await fetchEntries({
@@ -31,12 +32,15 @@ const builderContent = await fetchOneEntry({
   model: "page",
   userAttributes: { urlPath },
 });
+
+const apiKey = import.meta.env.PUBLIC_BUILDER_API_KEY;
 ---
 
 <Layout>
-  <Content
-    model="page"
-    apiKey={import.meta.env.PUBLIC_BUILDER_API_KEY}
+  <BuilderPage
+    client:load
     content={builderContent}
+    model="page"
+    apiKey={apiKey}
   />
 </Layout>
