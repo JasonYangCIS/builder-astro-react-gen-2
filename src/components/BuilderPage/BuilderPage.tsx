@@ -1,7 +1,6 @@
 import { Content, isPreviewing, type BuilderContent } from "@builder.io/sdk-react";
 import { trackedButtonConfig } from "../TrackedButton/TrackedButton.builder";
-
-const CUSTOM_COMPONENTS = [trackedButtonConfig];
+import { TrackedButton } from "../TrackedButton/TrackedButton";
 
 interface BuilderPageProps {
   content: BuilderContent | null;
@@ -14,12 +13,25 @@ export function BuilderPage({ content, apiKey, model }: BuilderPageProps) {
     return <div>404 - Page not found</div>;
   }
 
+  const contentId = content?.id ?? null;
+  const variationId =
+    (content as { testVariationId?: string } | null)?.testVariationId ?? null;
+
+  const customComponents = [
+    {
+      ...trackedButtonConfig,
+      component: (props: Record<string, unknown>) => (
+        <TrackedButton {...props} contentId={contentId} variationId={variationId} />
+      ),
+    },
+  ];
+
   return (
     <Content
       content={content}
       model={model}
       apiKey={apiKey}
-      customComponents={CUSTOM_COMPONENTS}
+      customComponents={customComponents}
     />
   );
 }

@@ -11,6 +11,8 @@ interface TrackedButtonProps {
   onClickCode?: string | null;
   trackEventType?: string | null;
   trackMetadata?: string | null;
+  contentId?: string | null;
+  variationId?: string | null;
 }
 
 export function TrackedButton({
@@ -22,6 +24,8 @@ export function TrackedButton({
   onClickCode,
   trackEventType = "click",
   trackMetadata,
+  contentId,
+  variationId,
 }: TrackedButtonProps) {
   const handleClick = () => {
     let metadata: Record<string, unknown> = {};
@@ -37,6 +41,12 @@ export function TrackedButton({
       type: trackEventType ?? "click",
       apiKey: API_KEY,
     };
+    if (contentId) {
+      trackArgs.contentId = contentId;
+    }
+    if (variationId) {
+      trackArgs.variationId = variationId;
+    }
     if (Object.keys(metadata).length > 0) {
       trackArgs.metadata = metadata;
     }
