@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { Content, fetchOneEntry, isPreviewing, type BuilderContent } from "@builder.io/sdk-react";
 import { trackedButtonConfig } from "../TrackedButton/TrackedButton.builder";
-import { TrackedButton } from "../TrackedButton/TrackedButton";
 
 const API_KEY = import.meta.env.PUBLIC_BUILDER_API_KEY;
+
+const customComponents = [trackedButtonConfig];
 
 export const BuilderPreviewPage = () => {
   const [content, setContent] = useState<BuilderContent | null>(null);
@@ -28,19 +29,6 @@ export const BuilderPreviewPage = () => {
   const shouldRender = content || isPreviewing(Object.fromEntries(new URLSearchParams(window.location.search)));
 
   if (!shouldRender) return <div>404 - Page not found</div>;
-
-  const contentId = content?.id ?? null;
-  const variationId =
-    (content as { testVariationId?: string } | null)?.testVariationId ?? null;
-
-  const customComponents = [
-    {
-      ...trackedButtonConfig,
-      component: (props: Record<string, unknown>) => (
-        <TrackedButton {...props} contentId={contentId} variationId={variationId} />
-      ),
-    },
-  ];
 
   return (
     <Content

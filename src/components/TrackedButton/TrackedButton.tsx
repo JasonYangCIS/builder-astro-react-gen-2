@@ -2,6 +2,14 @@ import { track } from "@builder.io/sdk-react";
 
 const API_KEY = import.meta.env.PUBLIC_BUILDER_API_KEY;
 
+interface BuilderContextValue {
+  content?: {
+    id?: string;
+    testVariationId?: string;
+    variationId?: string;
+  };
+}
+
 interface TrackedButtonProps {
   text?: string | null;
   link?: string | null;
@@ -11,8 +19,20 @@ interface TrackedButtonProps {
   onClickCode?: string | null;
   trackEventType?: string | null;
   trackMetadata?: string | null;
-  contentId?: string | null;
-  variationId?: string | null;
+  builderContext?: { value?: BuilderContextValue } | BuilderContextValue;
+}
+
+function readContentIds(builderContext: TrackedButtonProps["builderContext"]) {
+  if (!builderContext) return { contentId: null, variationId: null };
+  const ctx =
+    "value" in builderContext && builderContext.value
+      ? builderContext.value
+      : (builderContext as BuilderContextValue);
+  const content = ctx?.content;
+  return {
+    contentId: content?.id ?? null,
+    variationId: content?.testVariationId ?? content?.variationId ?? null,
+  };
 }
 
 export function TrackedButton({
@@ -24,9 +44,9 @@ export function TrackedButton({
   onClickCode,
   trackEventType = "click",
   trackMetadata,
-  contentId,
-  variationId,
+  builderContext,
 }: TrackedButtonProps) {
+  const { contentId, variationId } = readContentIds(builderContext);
   const handleClick = () => {
     let metadata: Record<string, unknown> = {};
     if (trackMetadata) {
