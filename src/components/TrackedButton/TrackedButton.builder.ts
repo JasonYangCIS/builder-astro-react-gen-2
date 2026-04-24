@@ -4,6 +4,9 @@ import { TrackedButton } from "./TrackedButton";
 export const trackedButtonConfig: RegisteredComponent = {
   component: TrackedButton,
   name: "Tracked Button",
+  shouldReceiveBuilderProps: {
+    builderContext: true,
+  },
   image:
     "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F56ef21f3e0134d17ba1e57f4f0a4ef99",
   inputs: [
