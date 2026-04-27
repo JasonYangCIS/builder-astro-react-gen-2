@@ -1,3 +1,14 @@
+/**
+ * Re-registers the SDK's built-in `Columns` block as a custom component.
+ *
+ * Why this exists: out-of-the-box Builder components are disabled at the
+ * space level in our publish space, but we still want `Columns` available
+ * in the editor's insert menu. Registering it here selectively allows it
+ * back in without re-enabling every default component.
+ *
+ * Do not "clean up" or remove — deleting this will make Columns disappear
+ * from the editor for all content in this space.
+ */
 import { Columns, type RegisteredComponent } from "@builder.io/sdk-react";
 
 export const builderColumnsConfig: RegisteredComponent = {
