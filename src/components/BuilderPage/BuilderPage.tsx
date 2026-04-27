@@ -2,6 +2,8 @@ import { Content, isPreviewing, type BuilderContent } from "@builder.io/sdk-reac
 import { trackedButtonConfig } from "../TrackedButton/TrackedButton.builder";
 import { pricingCardConfig } from "../PricingCard/PricingCard.builder";
 import { pricingTableConfig } from "../PricingTable/PricingTable.builder";
+import { builderColumnsConfig } from "../BuilderColumns/BuilderColumns.builder";
+import { builderBoxConfig } from "../BuilderBox/BuilderBox.builder";
 
 interface BuilderPageProps {
   content: BuilderContent | null;
@@ -9,7 +11,13 @@ interface BuilderPageProps {
   model: string;
 }
 
-const customComponents = [trackedButtonConfig, pricingCardConfig, pricingTableConfig];
+const customComponents = [
+  trackedButtonConfig,
+  pricingCardConfig,
+  pricingTableConfig,
+  builderColumnsConfig,
+  builderBoxConfig,
+];
 
 export function BuilderPage({ content, apiKey, model }: BuilderPageProps) {
   if (!content && !isPreviewing()) {
