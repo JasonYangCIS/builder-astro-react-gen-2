@@ -14,6 +14,15 @@ import { Columns, type RegisteredComponent } from "@builder.io/sdk-react";
 export const builderColumnsConfig: RegisteredComponent = {
   component: Columns,
   name: "Columns",
+  // The SDK's built-in Columns implementation requires all four
+  // builder-injected props to render correctly. Omitting these causes
+  // a runtime crash: "Cannot read properties of undefined (reading 'id')".
+  shouldReceiveBuilderProps: {
+    builderBlock: true,
+    builderContext: true,
+    builderComponents: true,
+    builderLinkComponent: true,
+  },
   inputs: [
     {
       name: "columns",
