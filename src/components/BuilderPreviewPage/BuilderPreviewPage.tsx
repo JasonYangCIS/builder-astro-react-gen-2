@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { Content, fetchOneEntry, isPreviewing, type BuilderContent } from "@builder.io/sdk-react";
 import { trackedButtonConfig } from "../TrackedButton/TrackedButton.builder";
+import { pricingCardConfig } from "../PricingCard/PricingCard.builder";
+import { pricingTableConfig } from "../PricingTable/PricingTable.builder";
 
 const API_KEY = import.meta.env.PUBLIC_BUILDER_API_KEY;
 
-const customComponents = [trackedButtonConfig];
+const customComponents = [trackedButtonConfig, pricingCardConfig, pricingTableConfig];
 
 export const BuilderPreviewPage = () => {
   const [content, setContent] = useState<BuilderContent | null>(null);
