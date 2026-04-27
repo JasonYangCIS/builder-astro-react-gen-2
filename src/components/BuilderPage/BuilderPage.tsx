@@ -1,5 +1,6 @@
 import { Content, isPreviewing, type BuilderContent } from "@builder.io/sdk-react";
 import { trackedButtonConfig } from "../TrackedButton/TrackedButton.builder";
+import { pricingCardConfig } from "../PricingCard/PricingCard.builder";
 
 interface BuilderPageProps {
   content: BuilderContent | null;
@@ -7,7 +8,7 @@ interface BuilderPageProps {
   model: string;
 }
 
-const customComponents = [trackedButtonConfig];
+const customComponents = [trackedButtonConfig, pricingCardConfig];
 
 export function BuilderPage({ content, apiKey, model }: BuilderPageProps) {
   if (!content && !isPreviewing()) {
