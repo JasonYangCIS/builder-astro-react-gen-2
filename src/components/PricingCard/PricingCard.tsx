@@ -3,6 +3,27 @@ interface PricingFeature {
   included?: boolean;
 }
 
+const SAFE_URL_PROTOCOLS = ["http:", "https:", "mailto:", "tel:"];
+
+function sanitizeUrl(url?: string | null): string {
+  if (!url) return "#";
+  const trimmed = url.trim();
+  if (trimmed === "" || trimmed === "#") return "#";
+  // Allow relative paths and same-page anchors
+  if (trimmed.startsWith("/") || trimmed.startsWith("#") || trimmed.startsWith("?")) {
+    return trimmed;
+  }
+  try {
+    const parsed = new URL(trimmed, "https://placeholder.local");
+    if (SAFE_URL_PROTOCOLS.includes(parsed.protocol)) {
+      return trimmed;
+    }
+  } catch {
+    // fall through
+  }
+  return "#";
+}
+
 interface PricingCardProps {
   planName?: string | null;
   description?: string | null;
@@ -63,7 +84,7 @@ export function PricingCard({
 
         <a
           className="pricing-cta"
-          href={ctaLink ?? "#"}
+          href={sanitizeUrl(ctaLink)}
         >
           {ctaText}
         </a>
