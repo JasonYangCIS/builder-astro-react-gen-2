@@ -14,7 +14,7 @@ import { BuilderBox } from "./BuilderBox";
 
 export const builderBoxConfig: RegisteredComponent = {
   component: BuilderBox,
-  name: "Box",
+  name: "App Box",
   canHaveChildren: true,
   defaultStyles: {
     display: "flex",
