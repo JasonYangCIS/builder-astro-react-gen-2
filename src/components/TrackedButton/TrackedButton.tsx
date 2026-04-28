@@ -47,6 +47,25 @@ export function TrackedButton({
   builderContext,
 }: TrackedButtonProps) {
   const { contentId, variationId } = readContentIds(builderContext);
+
+  // --- DEBUG: inspect what Builder is passing in ---
+  // Lets us verify whether `<Content>` has actually picked an A/B variation
+  // (testVariationId vs falling back to content.id).
+  if (typeof window !== "undefined") {
+    // Only log once per mount in dev
+    console.log("[TrackedButton][debug] builderContext:", builderContext);
+    console.log("[TrackedButton][debug] resolved ids:", {
+      contentId,
+      variationId,
+      isFallbackToContentId: contentId === variationId,
+    });
+    console.log(
+      "[TrackedButton][debug] document.cookie (look for builder.tests.*):",
+      document.cookie,
+    );
+  }
+  // -------------------------------------------------
+
   const handleClick = () => {
     let metadata: Record<string, unknown> = {};
     if (trackMetadata) {
@@ -70,6 +89,10 @@ export function TrackedButton({
     if (Object.keys(metadata).length > 0) {
       trackArgs.metadata = metadata;
     }
+
+    // --- DEBUG: log the exact track() payload ---
+    console.log("[TrackedButton][debug] track() args:", trackArgs);
+    // ---------------------------------------------
 
     try {
       track(trackArgs);
